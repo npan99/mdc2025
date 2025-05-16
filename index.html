@@ -60,74 +60,36 @@
       padding: 0.2rem;
       border-radius: 4px;
     }
+    .team:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .team.selected-1 {
+      background-color: #2a9d8f;
+    }
+    .team.selected-2 {
+      background-color: #e9c46a;
+    }
     .circle {
       width: 24px;
       height: 24px;
       border-radius: 50%;
       margin-right: 0.5rem;
       flex-shrink: 0;
-      background: linear-gradient(to right, white 50%, red 50%);
-    }
-    .first {
-      background: #2a9d8f;
-    }
-    .second {
-      background: #e9c46a;
-    }
-    #bracket {
-      display: flex;
-      justify-content: center;
-      gap: 4rem;
-      flex-wrap: wrap;
-    }
-    .column {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-    .match {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      margin-bottom: 2rem;
-      background: #1a1a1a;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
     }
     @media (max-width: 768px) {
       .groups {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .group-row {
-        display: flex;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
       }
       .group {
-        width: 48%;
+        width: 100%;
       }
       h1 {
         font-size: 1.5rem;
       }
-      .match {
-        margin-bottom: 1rem;
-        padding: 0.8rem;
-      }
       img[src="bolavip.png"] {
         max-width: 120px;
-      }
-      #bracket {
-        flex-direction: column;
-      }
-      .column {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        margin-bottom: 1rem;
       }
     }
   </style>
@@ -136,66 +98,117 @@
   <img src="bolavip.png" alt="Bolavip" />
   <h1>Mundial de Clubes 2025</h1>
   <p class="subheading">Selecciona qué equipo será primero y segundo en cada grupo</p>
-  <div class="groups">
-    <div class="group">
-      <h2>Grupo A</h2>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, green 50%, white 50%);"></div>Palmeiras</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, #001489 50%, white 50%);"></div>Porto</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, red 50%, gold 50%);"></div>Al-Ahly</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, pink 50%, black 50%);"></div>Inter Miami</div>
-    </div>
-    <div class="group">
-      <h2>Grupo B</h2>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, #00529F 50%, red 50%);"></div>PSG</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, red 50%, white 50%);"></div>Atlético Madrid</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, black 50%, white 50%);"></div>Botafogo</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, #5D9731 50%, gold 50%);"></div>Seattle Sounders</div>
-    </div>
-    <div class="group">
-      <h2>Grupo C</h2>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, red 50%, white 50%);"></div>Bayern Múnich</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, #000066 50%, white 50%);"></div>Auckland City</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, #0033A0 50%, #FFCC00 50%);"></div>Boca Juniors</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, red 50%, white 50%);"></div>Benfica</div>
-    </div>
-    <div class="group">
-      <h2>Grupo D</h2>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, red 50%, black 50%);"></div>Flamengo</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, #034694 50%, white 50%);"></div>Chelsea</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, red 50%, yellow 50%);"></div>Esperance</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, green 50%, white 50%);"></div>León</div>
-    </div>
-    <div class="group">
-      <h2>Grupo E</h2>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, white 50%, red 50%);"></div>River Plate</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, #001489 50%, white 50%);"></div>Monterrey</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, red 50%, black 50%);"></div>Urawa Red Diamonds</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, black 50%, blue 50%);"></div>Inter de Milán</div>
-    </div>
-    <div class="group">
-      <h2>Grupo F</h2>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, brown 50%, green 50%);"></div>Fluminense</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, yellow 50%, black 50%);"></div>Borussia Dortmund</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, blue 50%, white 50%);"></div>Ulsan HD</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, yellow 50%, green 50%);"></div>Mamelodi Sundowns</div>
-    </div>
-    <div class="group">
-      <h2>Grupo G</h2>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, #6CABDD 50%, white 50%);"></div>Manchester City</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, red 50%, white 50%);"></div>Wydad Casablanca</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, purple 50%, white 50%);"></div>Al-Ain</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, black 50%, white 50%);"></div>Juventus</div>
-    </div>
-    <div class="group">
-      <h2>Grupo H</h2>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, white 50%, gold 50%);"></div>Real Madrid</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, blue 50%, white 50%);"></div>Al-Hilal</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, orange 50%, white 50%);"></div>Pachuca</div>
-      <div class="team"><div class="circle" style="background: linear-gradient(to right, white 50%, blue 50%);"></div>Salzburgo</div>
-    </div>
+  <div class="groups" id="groups">
+    <!-- Grupos inyectados desde JS -->
   </div>
+  <script>
+    const groups = document.getElementById("groups");
+    const data = [
+      {
+        name: "Grupo A",
+        teams: [
+          { name: "Palmeiras", color: "green", color2: "white" },
+          { name: "Porto", color: "#001489", color2: "white" },
+          { name: "Al-Ahly", color: "red", color2: "gold" },
+          { name: "Inter Miami", color: "pink", color2: "black" },
+        ]
+      },
+      {
+        name: "Grupo B",
+        teams: [
+          { name: "PSG", color: "#00529F", color2: "red" },
+          { name: "Atlético Madrid", color: "red", color2: "white" },
+          { name: "Botafogo", color: "black", color2: "white" },
+          { name: "Seattle Sounders", color: "#5D9731", color2: "gold" },
+        ]
+      },
+      {
+        name: "Grupo C",
+        teams: [
+          { name: "Bayern Múnich", color: "red", color2: "white" },
+          { name: "Auckland City", color: "#000066", color2: "white" },
+          { name: "Boca Juniors", color: "#0033A0", color2: "#FFCC00" },
+          { name: "Benfica", color: "red", color2: "white" },
+        ]
+      },
+      {
+        name: "Grupo D",
+        teams: [
+          { name: "Flamengo", color: "red", color2: "black" },
+          { name: "Chelsea", color: "#034694", color2: "white" },
+          { name: "Esperance", color: "red", color2: "yellow" },
+          { name: "León", color: "green", color2: "white" },
+        ]
+      },
+      {
+        name: "Grupo E",
+        teams: [
+          { name: "River Plate", color: "white", color2: "red" },
+          { name: "Monterrey", color: "#001489", color2: "white" },
+          { name: "Urawa Red Diamonds", color: "red", color2: "black" },
+          { name: "Inter de Milán", color: "black", color2: "blue" },
+        ]
+      },
+      {
+        name: "Grupo F",
+        teams: [
+          { name: "Fluminense", color: "brown", color2: "green" },
+          { name: "Borussia Dortmund", color: "yellow", color2: "black" },
+          { name: "Ulsan HD", color: "blue", color2: "white" },
+          { name: "Mamelodi Sundowns", color: "yellow", color2: "green" },
+        ]
+      },
+      {
+        name: "Grupo G",
+        teams: [
+          { name: "Manchester City", color: "#6CABDD", color2: "white" },
+          { name: "Wydad Casablanca", color: "red", color2: "white" },
+          { name: "Al-Ain", color: "purple", color2: "white" },
+          { name: "Juventus", color: "black", color2: "white" },
+        ]
+      },
+      {
+        name: "Grupo H",
+        teams: [
+          { name: "Real Madrid", color: "white", color2: "gold" },
+          { name: "Al-Hilal", color: "blue", color2: "white" },
+          { name: "Pachuca", color: "orange", color2: "white" },
+          { name: "Salzburgo", color: "white", color2: "blue" },
+        ]
+      }
+    ];
+
+    data.forEach(group => {
+      const div = document.createElement("div");
+      div.className = "group";
+      div.innerHTML = `<h2>${group.name}</h2>`;
+
+      let selections = [];
+
+      group.teams.forEach(team => {
+        const teamDiv = document.createElement("div");
+        teamDiv.className = "team";
+        teamDiv.innerHTML = `<div class="circle" style="background: linear-gradient(to right, ${team.color} 50%, ${team.color2} 50%);"></div>${team.name}`;
+
+        teamDiv.addEventListener("click", () => {
+          if (selections.includes(teamDiv)) {
+            teamDiv.classList.remove("selected-1", "selected-2");
+            selections = selections.filter(t => t !== teamDiv);
+          } else if (selections.length < 2) {
+            selections.push(teamDiv);
+            teamDiv.classList.add(selections.length === 1 ? "selected-1" : "selected-2");
+          }
+        });
+
+        div.appendChild(teamDiv);
+      });
+
+      groups.appendChild(div);
+    });
+  </script>
 </body>
 </html>
+
 
 
 
