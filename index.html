@@ -108,6 +108,9 @@
 </style>
 </head>
 <body>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Bolavip_logo.svg/512px-Bolavip_logo.svg.png" alt="Bolavip" style="max-width: 160px; margin-bottom: 1rem; display: block;" />
+  <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Mundial de Clubes 2025</h1>
+  <p style="font-size: 1rem; color: #ccc; margin-top: 0; margin-bottom: 2rem;">Selecciona qué equipo será primero y segundo en cada grupo</p>
   <div class="groups" id="groups"></div>
   <h2>Octavos de final</h2>
   <div id="bracket">
@@ -347,16 +350,28 @@ function showChampion(team) {
 document.getElementById('shareButton').onclick = async () => {
   const captureArea = document.body;
   const canvas = await html2canvas(captureArea);
-  canvas.toBlob(blob => {
-    const file = new File([blob], 'fixture.png', { type: 'image/png' });
-    const data = new FormData();
-    data.append('file', file);
-    const url = URL.createObjectURL(file);
-    const message = encodeURIComponent('¡Mirá mi predicción del Mundial de Clubes 2025! 🏆');
-    const whatsappUrl = `https://wa.me/?text=${message}%20${url}`;
+  const base64image = canvas.toDataURL('image/png').split(',')[1];
+
+  const data = new FormData();
+  data.append('image', base64image);
+
+  fetch('https://api.imgbb.com/1/upload?key=808a545e88d3bea6601c087cddeaafd3', {
+    method: 'POST',
+    body: data
+  })
+  .then(response => response.json())
+  .then(result => {
+    const imageUrl = result.data.url;
+    const message = encodeURIComponent('Esta es mi predicción del Mundial de Clubes 2025 que hice en Bolavip:');
+    const whatsappUrl = `https://wa.me/?text=${message}%20${imageUrl}%0A%0AVos ya hiciste la tuya? Hacela acá y compartila: https://mdc2025.vercel.app/`;
     window.open(whatsappUrl, '_blank');
+  })
+  .catch(error => {
+    alert('Error al subir la imagen. Inténtalo de nuevo.');
+    console.error(error);
   });
 };
 </script>
 </body>
 </html>
+
