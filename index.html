@@ -209,10 +209,128 @@ function renderOctavos() {
   });
 }
 
+function renderCuartos(winners) {
+  const title = document.createElement("h2");
+  title.textContent = "Cuartos de Final";
+  knockout.appendChild(title);
+
+  const semifinalistas = [];
+
+  for (let i = 0; i < 4; i++) {
+    const team1 = winners[i * 2];
+    const team2 = winners[i * 2 + 1];
+
+    const match = document.createElement("div");
+    match.className = "group";
+
+    const div1 = document.createElement("div");
+    div1.className = "team";
+    const circle1 = document.createElement("div");
+    circle1.className = "circle";
+    const [c1a, c1b] = teamColors[team1] || ["gray", "gray"];
+    circle1.style.background = `linear-gradient(to right, ${c1a} 50%, ${c1b} 50%)`;
+    div1.appendChild(circle1);
+    div1.append(team1);
+
+    const div2 = document.createElement("div");
+    div2.className = "team";
+    const circle2 = document.createElement("div");
+    circle2.className = "circle";
+    const [c2a, c2b] = teamColors[team2] || ["gray", "gray"];
+    circle2.style.background = `linear-gradient(to right, ${c2a} 50%, ${c2b} 50%)`;
+    div2.appendChild(circle2);
+    div2.append(team2);
+
+    div1.addEventListener("click", () => {
+      div1.classList.add("selected-1");
+      div2.classList.remove("selected-1");
+      semifinalistas[i] = team1;
+      if (semifinalistas.filter(Boolean).length === 4) renderSemis(semifinalistas);
+    });
+
+    div2.addEventListener("click", () => {
+      div2.classList.add("selected-1");
+      div1.classList.remove("selected-1");
+      semifinalistas[i] = team2;
+      if (semifinalistas.filter(Boolean).length === 4) renderSemis(semifinalistas);
+    });
+
+    match.appendChild(div1);
+    match.appendChild(div2);
+    knockout.appendChild(match);
+  }
+}
+
+function renderSemis(semifinalistas) {
+  const title = document.createElement("h2");
+  title.textContent = "Semifinales";
+  knockout.appendChild(title);
+
+  const finalistas = [];
+
+  for (let i = 0; i < 2; i++) {
+    const team1 = semifinalistas[i * 2];
+    const team2 = semifinalistas[i * 2 + 1];
+
+    const match = document.createElement("div");
+    match.className = "group";
+
+    const div1 = document.createElement("div");
+    div1.className = "team";
+    const circle1 = document.createElement("div");
+    circle1.className = "circle";
+    const [c1a, c1b] = teamColors[team1] || ["gray", "gray"];
+    circle1.style.background = `linear-gradient(to right, ${c1a} 50%, ${c1b} 50%)`;
+    div1.appendChild(circle1);
+    div1.append(team1);
+
+    const div2 = document.createElement("div");
+    div2.className = "team";
+    const circle2 = document.createElement("div");
+    circle2.className = "circle";
+    const [c2a, c2b] = teamColors[team2] || ["gray", "gray"];
+    circle2.style.background = `linear-gradient(to right, ${c2a} 50%, ${c2b} 50%)`;
+    div2.appendChild(circle2);
+    div2.append(team2);
+
+    div1.addEventListener("click", () => {
+      div1.classList.add("selected-1");
+      div2.classList.remove("selected-1");
+      finalistas[i] = team1;
+      if (finalistas.filter(Boolean).length === 2) renderFinal(finalistas);
+    });
+
+    div2.addEventListener("click", () => {
+      div2.classList.add("selected-1");
+      div1.classList.remove("selected-1");
+      finalistas[i] = team2;
+      if (finalistas.filter(Boolean).length === 2) renderFinal(finalistas);
+    });
+
+    match.appendChild(div1);
+    match.appendChild(div2);
+    knockout.appendChild(match);
+  }
+}
+
+function renderFinal(finalistas) {
+  const title = document.createElement("h2");
+  title.textContent = "Final";
+  knockout.appendChild(title);
+
+  const match = document.createElement("div");
+  match.className = "group";
+
+  const div1 = document.createElement("div");
+  div1.className = "team";
+  const circle1 = document.createElement("div");
+}
+
 renderGroups();
 </script>
 </body>
 </html>
+
 
 
 
