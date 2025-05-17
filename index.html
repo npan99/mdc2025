@@ -51,6 +51,7 @@
   </style>
 </head>
 <body>
+<img src="logo-bolavip.png" alt="Bolavip" style="display:block;margin:0 auto 1rem auto;width:150px;">
 <h1>Mundial de Clubes 2025</h1>
 <p>Seleccioná los dos clasificados de cada grupo para avanzar a octavos</p>
 <div class="groups-container" id="fixture"></div>
@@ -190,24 +191,41 @@ function renderOctavos() {
     seconds.push(selected[i + 1]);
   }
   const matchups = [
-    [firsts[0], seconds[1]],
-    [firsts[1], seconds[0]],
-    [firsts[2], seconds[3]],
-    [firsts[3], seconds[2]],
-    [firsts[4], seconds[5]],
-    [firsts[5], seconds[4]],
-    [firsts[6], seconds[7]],
-    [firsts[7], seconds[6]]
+    [firsts[0], seconds[1]], // 1A vs 2B
+    [firsts[2], seconds[3]], // 1C vs 2D
+    [firsts[4], seconds[5]], // 1E vs 2F
+    [firsts[6], seconds[7]], // 1G vs 2H
+    [firsts[1], seconds[0]], // 1B vs 2A
+    [firsts[3], seconds[2]], // 1D vs 2C
+    [firsts[7], seconds[6]], // 1H vs 2G
+    [firsts[5], seconds[4]]  // 1F vs 2E
   ].flat();
   renderPhase("Octavos de Final", matchups, renderCuartos);
 }
 
 function renderCuartos(winners) {
-  renderPhase("Cuartos de Final", winners, renderSemis);
+  // Distribución FIFA:
+  // W49: winners[0] vs winners[1] (O1 vs O2)
+  // W50: winners[4] vs winners[5] (O5 vs O6)
+  // W51: winners[2] vs winners[3] (O3 vs O4)
+  // W52: winners[6] vs winners[7] (O7 vs O8)
+  const cuartosMatchups = [
+    winners[0], winners[1], // W49
+    winners[4], winners[5], // W50
+    winners[2], winners[3], // W51
+    winners[6], winners[7]  // W52
+  ];
+  renderPhase("Cuartos de Final", cuartosMatchups, renderSemis);
 }
 
 function renderSemis(winners) {
-  renderPhase("Semifinales", winners, renderFinal);
+  // W57: W49 vs W50 → winners[0] vs winners[1]
+  // W58: W51 vs W52 → winners[2] vs winners[3]
+  const semiMatchups = [
+    winners[0], winners[1],
+    winners[2], winners[3]
+  ];
+  renderPhase("Semifinales", semiMatchups, renderFinal);
 }
 
 function renderFinal(winners) {
@@ -221,12 +239,21 @@ function renderFinal(winners) {
 
     const resetBtn = document.createElement("button");
     resetBtn.textContent = "🔁 Reiniciar";
-    resetBtn.style.margin = "0.5rem";
+    resetBtn.style.margin = "0 auto";
     resetBtn.onclick = () => location.reload();
 
     const shareBtn = document.createElement("button");
-    shareBtn.textContent = "📤 Compartir";
-    shareBtn.style.margin = "0.5rem";
+    shareBtn.innerHTML = '<img src="https://img.icons8.com/ios-filled/20/ffffff/whatsapp.png" style="vertical-align:middle;margin-right:8px;">Compartir pronóstico';
+    shareBtn.style.backgroundColor = "#25D366";
+    shareBtn.style.color = "white";
+    shareBtn.style.border = "none";
+    shareBtn.style.borderRadius = "5px";
+    shareBtn.style.padding = "0.5rem 1rem";
+    shareBtn.style.cursor = "pointer";
+    shareBtn.style.fontSize = "1rem";
+    shareBtn.style.display = "inline-flex";
+    shareBtn.style.alignItems = "center";
+    shareBtn.style.gap = "0.5rem";
     shareBtn.onclick = () => {
       html2canvas(document.body).then(canvas => {
         canvas.toBlob(blob => {
@@ -250,14 +277,18 @@ function renderFinal(winners) {
       });
     };
 
-    btnContainer.appendChild(resetBtn);
     btnContainer.appendChild(shareBtn);
+    const spacer = document.createElement("div");
+    spacer.style.height = "0.5rem";
+    btnContainer.appendChild(spacer);
+    btnContainer.appendChild(resetBtn);
     knockout.appendChild(btnContainer);
   });
 }
 
 renderGroups();
 </script>
+<img src="logo-bolavip.png" alt="Bolavip" style="display:block;margin:2rem auto 0 auto;width:150px;">
 </body>
 </html>
 
