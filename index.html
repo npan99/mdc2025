@@ -150,6 +150,32 @@ function renderGroups() {
 }
 
 function renderPhase(titleText, teams, nextCallback) {
+  // Evitar semifinales entre equipos del mismo grupo
+  if (titleText === "Semifinales") {
+    const getGroup = (team) => {
+      for (let i = 0; i < groupsData.length; i++) {
+        if (groupsData[i].includes(team)) return i;
+      }
+      return -1;
+    };
+    const g1 = getGroup(teams[0]);
+    const g2 = getGroup(teams[1]);
+    const g3 = getGroup(teams[2]);
+    const g4 = getGroup(teams[3]);
+
+    if (g1 === g2 || g3 === g4 || g1 === g3 || g1 === g4 || g2 === g3 || g2 === g4) {
+      const alt1 = [teams[0], teams[2], teams[1], teams[3]];
+      const alt2 = [teams[0], teams[3], teams[1], teams[2]];
+      const altSets = [alt1, alt2];
+      for (const alt of altSets) {
+        const [a1, a2, a3, a4] = alt.map(getGroup);
+        if (a1 !== a2 && a3 !== a4 && a1 !== a3 && a1 !== a4 && a2 !== a3 && a2 !== a4) {
+          teams = alt;
+          break;
+        }
+      }
+    }
+  }
   const title = document.createElement("h2");
   title.textContent = titleText;
   knockout.appendChild(title);
@@ -205,15 +231,15 @@ function renderOctavos() {
 
 function renderCuartos(winners) {
   // Distribución FIFA:
-  // W49: winners[0] vs winners[1] (O1 vs O2)
-  // W50: winners[4] vs winners[5] (O5 vs O6)
-  // W51: winners[2] vs winners[3] (O3 vs O4)
-  // W52: winners[6] vs winners[7] (O7 vs O8)
+  // W49: O1 vs O2 (winners[0], winners[1])
+  // W50: O3 vs O4 (winners[2], winners[3])
+  // W51: O5 vs O6 (winners[4], winners[5])
+  // W52: O7 vs O8 (winners[6], winners[7])
   const cuartosMatchups = [
-    winners[0], winners[1], // W49
-    winners[4], winners[5], // W50
-    winners[2], winners[3], // W51
-    winners[6], winners[7]  // W52
+    winners[0], winners[1],
+    winners[2], winners[3],
+    winners[4], winners[5],
+    winners[6], winners[7]
   ];
   renderPhase("Cuartos de Final", cuartosMatchups, renderSemis);
 }
@@ -291,6 +317,7 @@ renderGroups();
 <img src="logo-bolavip.png" alt="Bolavip" style="display:block;margin:2rem auto 0 auto;width:150px;">
 </body>
 </html>
+
 
 
 
