@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador Mundial de Clubes 2025</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       background: #000;
       color: #fff;
@@ -63,12 +61,8 @@
     .team:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
-    .team.selected-1 {
-      background-color: #2a9d8f;
-    }
-    .team.selected-2 {
-      background-color: #e9c46a;
-    }
+    .team.selected-1 { background-color: #2a9d8f; }
+    .team.selected-2 { background-color: #e9c46a; }
     .circle {
       width: 24px;
       height: 24px;
@@ -76,21 +70,20 @@
       margin-right: 0.5rem;
       flex-shrink: 0;
     }
+    .knockout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      max-width: 1200px;
+      margin-bottom: 2rem;
+    }
     @media (max-width: 768px) {
       .groups {
-        display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
       }
-      .group {
-        width: 100%;
-      }
-      h1 {
-        font-size: 1.5rem;
-      }
-      img[src="bolavip.png"] {
-        max-width: 120px;
-      }
+      h1 { font-size: 1.5rem; }
+      img[src="bolavip.png"] { max-width: 120px; }
     }
   </style>
 </head>
@@ -98,84 +91,54 @@
   <img src="bolavip.png" alt="Bolavip" />
   <h1>Mundial de Clubes 2025</h1>
   <p class="subheading">Selecciona qué equipo será primero y segundo en cada grupo</p>
-  <div class="groups" id="groups">
-    <!-- Grupos inyectados desde JS -->
-  </div>
+  <div class="groups" id="groups"></div>
+  <div id="octavos" class="knockout"></div>
+
   <script>
     const groups = document.getElementById("groups");
+    const octavos = document.getElementById("octavos");
+
     const data = [
-      {
-        name: "Grupo A",
-        teams: [
-          { name: "Palmeiras", color: "green", color2: "white" },
-          { name: "Porto", color: "#001489", color2: "white" },
-          { name: "Al-Ahly", color: "red", color2: "gold" },
-          { name: "Inter Miami", color: "pink", color2: "black" },
-        ]
-      },
-      {
-        name: "Grupo B",
-        teams: [
-          { name: "PSG", color: "#00529F", color2: "red" },
-          { name: "Atlético Madrid", color: "red", color2: "white" },
-          { name: "Botafogo", color: "black", color2: "white" },
-          { name: "Seattle Sounders", color: "#5D9731", color2: "gold" },
-        ]
-      },
-      {
-        name: "Grupo C",
-        teams: [
-          { name: "Bayern Múnich", color: "red", color2: "white" },
-          { name: "Auckland City", color: "#000066", color2: "white" },
-          { name: "Boca Juniors", color: "#0033A0", color2: "#FFCC00" },
-          { name: "Benfica", color: "red", color2: "white" },
-        ]
-      },
-      {
-        name: "Grupo D",
-        teams: [
-          { name: "Flamengo", color: "red", color2: "black" },
-          { name: "Chelsea", color: "#034694", color2: "white" },
-          { name: "Esperance", color: "red", color2: "yellow" },
-          { name: "León", color: "green", color2: "white" },
-        ]
-      },
-      {
-        name: "Grupo E",
-        teams: [
-          { name: "River Plate", color: "white", color2: "red" },
-          { name: "Monterrey", color: "#001489", color2: "white" },
-          { name: "Urawa Red Diamonds", color: "red", color2: "black" },
-          { name: "Inter de Milán", color: "black", color2: "blue" },
-        ]
-      },
-      {
-        name: "Grupo F",
-        teams: [
-          { name: "Fluminense", color: "brown", color2: "green" },
-          { name: "Borussia Dortmund", color: "yellow", color2: "black" },
-          { name: "Ulsan HD", color: "blue", color2: "white" },
-          { name: "Mamelodi Sundowns", color: "yellow", color2: "green" },
-        ]
-      },
-      {
-        name: "Grupo G",
-        teams: [
-          { name: "Manchester City", color: "#6CABDD", color2: "white" },
-          { name: "Wydad Casablanca", color: "red", color2: "white" },
-          { name: "Al-Ain", color: "purple", color2: "white" },
-          { name: "Juventus", color: "black", color2: "white" },
-        ]
-      },
-      {
-        name: "Grupo H",
-        teams: [
-          { name: "Real Madrid", color: "white", color2: "gold" },
-          { name: "Al-Hilal", color: "blue", color2: "white" },
-          { name: "Pachuca", color: "orange", color2: "white" },
-          { name: "Salzburgo", color: "white", color2: "blue" },
-        ]
-      }
+      { name: "Grupo A", teams: [
+        { name: "Palmeiras", color: "green", color2: "white" },
+        { name: "Porto", color: "#001489", color2: "white" },
+        { name: "Al-Ahly", color: "red", color2: "gold" },
+        { name: "Inter Miami", color: "pink", color2: "black" } ] },
+      { name: "Grupo B", teams: [
+        { name: "PSG", color: "#00529F", color2: "red" },
+        { name: "Atlético Madrid", color: "red", color2: "white" },
+        { name: "Botafogo", color: "black", color2: "white" },
+        { name: "Seattle Sounders", color: "#5D9731", color2: "gold" } ] },
+      { name: "Grupo C", teams: [
+        { name: "Bayern Múnich", color: "red", color2: "white" },
+        { name: "Auckland City", color: "#000066", color2: "white" },
+        { name: "Boca Juniors", color: "#0033A0", color2: "#FFCC00" },
+        { name: "Benfica", color: "red", color2: "white" } ] },
+      { name: "Grupo D", teams: [
+        { name: "Flamengo", color: "red", color2: "black" },
+        { name: "Chelsea", color: "#034694", color2: "white" },
+        { name: "Esperance", color: "red", color2: "yellow" },
+        { name: "León", color: "green", color2: "white" } ] },
+      { name: "Grupo E", teams: [
+        { name: "River Plate", color: "white", color2: "red" },
+        { name: "Monterrey", color: "#001489", color2: "white" },
+        { name: "Urawa Red Diamonds", color: "red", color2: "black" },
+        { name: "Inter de Milán", color: "black", color2: "blue" } ] },
+      { name: "Grupo F", teams: [
+        { name: "Fluminense", color: "brown", color2: "green" },
+        { name: "Borussia Dortmund", color: "yellow", color2: "black" },
+        { name: "Ulsan HD", color: "blue", color2: "white" },
+        { name: "Mamelodi Sundowns", color: "yellow", color2: "green" } ] },
+      { name: "Grupo G", teams: [
+        { name: "Manchester City", color: "#6CABDD", color2: "white" },
+        { name: "Wydad Casablanca", color: "red", color2: "white" },
+        { name: "Al-Ain", color: "purple", color2: "white" },
+        { name: "Juventus", color: "black", color2: "white" } ] },
+      { name: "Grupo H", teams: [
+        { name: "Real Madrid", color: "white", color2: "gold" },
+        { name: "Al-Hilal", color: "blue", color2: "white" },
+        { name: "Pachuca", color: "orange", color2: "white" },
+        { name: "Salzburgo", color: "white", color2: "blue" } ] }
     ];
 
     data.forEach(group => {
@@ -197,6 +160,11 @@
           } else if (selections.length < 2) {
             selections.push(teamDiv);
             teamDiv.classList.add(selections.length === 1 ? "selected-1" : "selected-2");
+
+            if (selections.length === 2) {
+              const allSelected = document.querySelectorAll('.team.selected-2');
+              if (allSelected.length === 8) renderOctavos();
+            }
           }
         });
 
@@ -205,9 +173,226 @@
 
       groups.appendChild(div);
     });
-  </script>
+
+    function renderOctavos() {
+  octavos.innerHTML = "<h2 style='width:100%;text-align:center;'>Octavos de Final</h2>";
+
+  const selectedTeams = Array.from(document.querySelectorAll('.team.selected-1, .team.selected-2'));
+  const teams = selectedTeams.map(team => team.textContent.trim());
+
+  const winners = [];
+
+  for (let i = 0; i < 8; i++) {
+    const team1 = teams[i];
+    const team2 = teams[15 - i];
+
+    const match = document.createElement("div");
+    match.className = "group";
+    match.dataset.matchIndex = i;
+
+    const options = document.createElement("div");
+    options.style.display = "flex";
+    options.style.flexDirection = "column";
+    options.style.gap = "0.5rem";
+
+    const team1Obj = data.flatMap(g => g.teams).find(t => t.name === team1);
+    const team2Obj = data.flatMap(g => g.teams).find(t => t.name === team2);
+
+    const div1 = document.createElement("div");
+    div1.className = "team";
+    div1.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team1Obj.color} 50%, ${team1Obj.color2} 50%);'></div>${team1}`;
+    div1.addEventListener("click", () => {
+      div1.classList.add("selected-1");
+      div2.classList.remove("selected-1");
+      winners[i] = team1;
+      if (winners.filter(Boolean).length === 8) renderCuartos(winners);
+    });
+
+    const div2 = document.createElement("div");
+    div2.className = "team";
+    div2.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team2Obj.color} 50%, ${team2Obj.color2} 50%);'></div>${team2}`;
+    div2.addEventListener("click", () => {
+      div2.classList.add("selected-1");
+      div1.classList.remove("selected-1");
+      winners[i] = team2;
+      if (winners.filter(Boolean).length === 8) renderCuartos(winners);
+    });
+
+    options.appendChild(div1);
+    options.appendChild(div2);
+    match.appendChild(options);
+    octavos.appendChild(match);
+  }
+}
+
+function renderCuartos(octavosGanadores) {
+  const container = document.createElement("div");
+  container.className = "knockout";
+  const title = document.createElement("h2");
+  title.textContent = "Cuartos de Final";
+  title.style.width = "100%";
+  title.style.textAlign = "center";
+  container.appendChild(title);
+
+  const semifinalistas = [];
+
+  for (let i = 0; i < 4; i++) {
+    const team1 = octavosGanadores[i * 2];
+    const team2 = octavosGanadores[i * 2 + 1];
+
+    const match = document.createElement("div");
+    match.className = "group";
+
+    const options = document.createElement("div");
+    options.style.display = "flex";
+    options.style.flexDirection = "column";
+    options.style.gap = "0.5rem";
+
+    const team1Obj = data.flatMap(g => g.teams).find(t => t.name === team1);
+    const team2Obj = data.flatMap(g => g.teams).find(t => t.name === team2);
+
+    const div1 = document.createElement("div");
+    div1.className = "team";
+    div1.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team1Obj.color} 50%, ${team1Obj.color2} 50%);'></div>${team1}`;
+    div1.addEventListener("click", () => {
+      div1.classList.add("selected-1");
+      div2.classList.remove("selected-1");
+      semifinalistas[i] = team1;
+      if (semifinalistas.filter(Boolean).length === 4) renderSemis(semifinalistas);
+    });
+
+    const div2 = document.createElement("div");
+    div2.className = "team";
+    div2.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team2Obj.color} 50%, ${team2Obj.color2} 50%);'></div>${team2}`;
+    div2.addEventListener("click", () => {
+      div2.classList.add("selected-1");
+      div1.classList.remove("selected-1");
+      semifinalistas[i] = team2;
+      if (semifinalistas.filter(Boolean).length === 4) renderSemis(semifinalistas);
+    });
+
+    options.appendChild(div1);
+    options.appendChild(div2);
+    match.appendChild(options);
+    container.appendChild(match);
+  }
+
+  document.body.appendChild(container);
+}
+  
+function renderSemis(cuartosGanadores) {
+  const container = document.createElement("div");
+  container.className = "knockout";
+  const title = document.createElement("h2");
+  title.textContent = "Semifinales";
+  title.style.width = "100%";
+  title.style.textAlign = "center";
+  container.appendChild(title);
+
+  const finalistas = [];
+
+  for (let i = 0; i < 2; i++) {
+    const team1 = cuartosGanadores[i * 2];
+    const team2 = cuartosGanadores[i * 2 + 1];
+
+    const match = document.createElement("div");
+    match.className = "group";
+
+    const options = document.createElement("div");
+    options.style.display = "flex";
+    options.style.flexDirection = "column";
+    options.style.gap = "0.5rem";
+
+    const team1Obj = data.flatMap(g => g.teams).find(t => t.name === team1);
+    const team2Obj = data.flatMap(g => g.teams).find(t => t.name === team2);
+
+    const div1 = document.createElement("div");
+    div1.className = "team";
+    div1.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team1Obj.color} 50%, ${team1Obj.color2} 50%);'></div>${team1}`;
+    div1.addEventListener("click", () => {
+      div1.classList.add("selected-1");
+      div2.classList.remove("selected-1");
+      finalistas[i] = team1;
+      if (finalistas.filter(Boolean).length === 2) renderFinal(finalistas);
+    });
+
+    const div2 = document.createElement("div");
+    div2.className = "team";
+    div2.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team2Obj.color} 50%, ${team2Obj.color2} 50%);'></div>${team2}`;
+    div2.addEventListener("click", () => {
+      div2.classList.add("selected-1");
+      div1.classList.remove("selected-1");
+      finalistas[i] = team2;
+      if (finalistas.filter(Boolean).length === 2) renderFinal(finalistas);
+    });
+
+    options.appendChild(div1);
+    options.appendChild(div2);
+    match.appendChild(options);
+    container.appendChild(match);
+  }
+
+  document.body.appendChild(container);
+}
+
+function renderFinal(finalistas) {
+  const container = document.createElement("div");
+  container.className = "knockout";
+  const title = document.createElement("h2");
+  title.textContent = "Final";
+  title.style.width = "100%";
+  title.style.textAlign = "center";
+  container.appendChild(title);
+
+  const match = document.createElement("div");
+  match.className = "group";
+
+  const options = document.createElement("div");
+  options.style.display = "flex";
+  options.style.flexDirection = "column";
+  options.style.gap = "0.5rem";
+
+  const team1Obj = data.flatMap(g => g.teams).find(t => t.name === finalistas[0]);
+  const team2Obj = data.flatMap(g => g.teams).find(t => t.name === finalistas[1]);
+
+  const div1 = document.createElement("div");
+  div1.className = "team";
+  div1.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team1Obj.color} 50%, ${team1Obj.color2} 50%);'></div>${finalistas[0]}`;
+  div1.addEventListener("click", () => {
+    div1.classList.add("selected-1");
+    div2.classList.remove("selected-1");
+    renderCampeon(finalistas[0]);
+  });
+
+  const div2 = document.createElement("div");
+  div2.className = "team";
+  div2.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team2Obj.color} 50%, ${team2Obj.color2} 50%);'></div>${finalistas[1]}`;
+  div2.addEventListener("click", () => {
+    div2.classList.add("selected-1");
+    div1.classList.remove("selected-1");
+    renderCampeon(finalistas[1]);
+  });
+
+  options.appendChild(div1);
+  options.appendChild(div2);
+  match.appendChild(options);
+  container.appendChild(match);
+  document.body.appendChild(container);
+}
+
+function renderCampeon(equipo) {
+  const title = document.createElement("h2");
+  title.textContent = `🏆 Campeón: ${equipo}`;
+  title.style.color = "#FFD700";
+  title.style.textAlign = "center";
+  title.style.fontSize = "2rem";
+  title.style.marginTop = "1rem";
+  document.body.appendChild(title);
+}
+</script>
 </body>
 </html>
+
 
 
 
