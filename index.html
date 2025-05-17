@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulador Mundial de Clubes 2025</title>
+  <title>Simulador Mundial de Clubes FIFA 2025</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
@@ -309,21 +309,21 @@ shareBtn.onclick = () => {
 
 ¿Vos ya hiciste la tuya? Hacela acá y compartila: https://mdc2025.vercel.app/`;
 
-        // Crear un <a> para asegurar compatibilidad con móviles
-        const a = document.createElement("a");
-        a.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        a.target = "_blank";
-        a.click();
+        const whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
+
+        // ✅ En lugar de window.open, redirigimos directamente:
+        window.location.href = whatsappURL;
       })
       .catch(error => {
         shareBtn.disabled = false;
         shareBtn.textContent = "Compartir pronóstico";
-        console.error("Error al subir a ImgBB:", error);
         alert("Hubo un error al subir la imagen.");
+        console.error(error);
       });
     });
   });
 };
+
 
 
 
