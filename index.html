@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador Mundial de Clubes 2025</title>
@@ -71,13 +72,14 @@
       flex-shrink: 0;
     }
     .knockout {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      max-width: 1200px;
-      margin-bottom: 2rem;
-    }
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
     @media (max-width: 768px) {
       .groups {
         grid-template-columns: repeat(2, 1fr);
@@ -390,8 +392,34 @@ function renderCampeon(equipo) {
   document.body.appendChild(title);
 }
 </script>
+<button id="shareBtn" style="margin: 2rem auto; padding: 0.8rem 1.2rem; font-size: 1rem; border: none; border-radius: 8px; background-color: #25d366; color: white; cursor: pointer; display: block;">Compartir por WhatsApp</button>
+<script>
+document.getElementById("shareBtn").addEventListener("click", async () => {
+  const captureElement = document.body;
+  const canvas = await html2canvas(captureElement);
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+
+  const form = new FormData();
+  form.append("image", blob, "captura.png");
+  form.append("key", "808a545e88d3bea6601c087cddeaafd3");
+
+  const res = await fetch("https://api.imgbb.com/1/upload", {
+    method: "POST",
+    body: form
+  });
+  const data = await res.json();
+  const imageUrl = data.data.url;
+
+  const mensaje = encodeURIComponent(`Esta es mi predicción del Mundial de Clubes 2025 que hice en Bolavip: ${imageUrl}
+
+Vos ya hiciste la tuya? Hacela acá y compartila: https://mdc2025.vercel.app/`);
+  const whatsappUrl = `https://wa.me/?text=${mensaje}`;
+  window.open(whatsappUrl, '_blank');
+});
+</script>
 </body>
 </html>
+
 
 
 
