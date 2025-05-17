@@ -1,45 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador Mundial de Clubes 2025</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-    * { box-sizing: border-box; }
     body {
-      background: #000;
-      color: #fff;
+      background: black;
+      color: white;
       font-family: sans-serif;
-      margin: 0;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    img[src="bolavip.png"] {
-      max-width: 160px;
-      margin: 0.5rem auto;
-      display: block;
-    }
-    h1 {
-      font-size: 2rem;
-      text-align: center;
-      margin: 0.2rem 0;
-    }
-    p.subheading {
-      font-size: 1rem;
-      color: #ccc;
-      margin: 0 0 1.5rem;
+      padding: 2rem;
       text-align: center;
     }
-    .groups {
+    .groups-container {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-bottom: 2rem;
-      width: 100%;
-      max-width: 1200px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      justify-content: center;
     }
     .group {
       background: #1a1a1a;
@@ -47,378 +25,195 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
     }
-    .group h2 {
-      text-align: center;
-      font-size: 1.2rem;
-    }
     .team {
       display: flex;
       align-items: center;
       margin: 0.5rem 0;
-      cursor: pointer;
-      padding: 0.2rem;
+      padding: 0.5rem;
       border-radius: 4px;
+      cursor: pointer;
+      background: #333;
     }
-    .team:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+    .team.selected-1 {
+      background-color: #2a9d8f;
     }
-    .team.selected-1 { background-color: #2a9d8f; }
-    .team.selected-2 { background-color: #e9c46a; }
+    .team.selected-2 {
+      background-color: #e9c46a;
+    }
     .circle {
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       margin-right: 0.5rem;
       flex-shrink: 0;
     }
-    .knockout {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  width: 100%;
-  max-width: 600px;
-  margin-bottom: 2rem;
-}
-    @media (max-width: 768px) {
-      .groups {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      h1 { font-size: 1.5rem; }
-      img[src="bolavip.png"] { max-width: 120px; }
-    }
   </style>
 </head>
 <body>
-  <img src="bolavip.png" alt="Bolavip" />
-  <h1>Mundial de Clubes 2025</h1>
-  <p class="subheading">Selecciona qué equipo será primero y segundo en cada grupo</p>
-  <div class="groups" id="groups"></div>
-  <div id="octavos" class="knockout"></div>
+<h1>Mundial de Clubes 2025</h1>
+<p>Seleccioná los dos clasificados de cada grupo para avanzar a octavos</p>
+<div class="groups-container" id="fixture"></div>
+<div id="knockout"></div>
+<script>
+const teamColors = {
+  "River Plate": ["white", "red"],
+  "Flamengo": ["red", "black"],
+  "Chelsea": ["blue", "white"],
+  "Real Madrid": ["white", "gold"],
+  "Boca Juniors": ["blue", "yellow"],
+  "Palmeiras": ["green", "white"],
+  "Manchester City": ["skyblue", "white"],
+  "Al-Hilal": ["blue", "white"],
+  "PSG": ["navy", "red"],
+  "Monterrey": ["#00529F", "white"],
+  "Porto": ["#001489", "white"],
+  "Al-Ahly": ["red", "gold"],
+  "Inter Miami": ["pink", "black"],
+  "Atlético Madrid": ["red", "white"],
+  "Botafogo": ["black", "white"],
+  "Seattle Sounders": ["#5D9731", "gold"],
+  "Bayern Múnich": ["red", "white"],
+  "Auckland City": ["#000066", "white"],
+  "Benfica": ["red", "white"],
+  "Esperance": ["red", "yellow"],
+  "León": ["green", "white"],
+  "Urawa Red Diamonds": ["red", "black"],
+  "Inter de Milán": ["black", "blue"],
+  "Fluminense": ["brown", "green"],
+  "Borussia Dortmund": ["yellow", "black"],
+  "Ulsan HD": ["blue", "white"],
+  "Mamelodi Sundowns": ["yellow", "green"],
+  "Wydad Casablanca": ["red", "white"],
+  "Al-Ain": ["purple", "white"],
+  "Juventus": ["black", "white"],
+  "Pachuca": ["orange", "white"],
+  "Salzburgo": ["white", "blue"]
+};
 
-  <script>
-    const groups = document.getElementById("groups");
-    const octavos = document.getElementById("octavos");
+const groupsData = [
+  ["Palmeiras", "Porto", "Al-Ahly", "Inter Miami"],
+  ["PSG", "Atlético Madrid", "Botafogo", "Seattle Sounders"],
+  ["Bayern Múnich", "Auckland City", "Boca Juniors", "Benfica"],
+  ["Flamengo", "Chelsea", "Esperance", "León"],
+  ["River Plate", "Monterrey", "Urawa Red Diamonds", "Inter de Milán"],
+  ["Fluminense", "Borussia Dortmund", "Ulsan HD", "Mamelodi Sundowns"],
+  ["Manchester City", "Wydad Casablanca", "Al-Ain", "Juventus"],
+  ["Real Madrid", "Al-Hilal", "Pachuca", "Salzburgo"]
+];
 
-    const data = [
-      { name: "Grupo A", teams: [
-        { name: "Palmeiras", color: "green", color2: "white" },
-        { name: "Porto", color: "#001489", color2: "white" },
-        { name: "Al-Ahly", color: "red", color2: "gold" },
-        { name: "Inter Miami", color: "pink", color2: "black" } ] },
-      { name: "Grupo B", teams: [
-        { name: "PSG", color: "#00529F", color2: "red" },
-        { name: "Atlético Madrid", color: "red", color2: "white" },
-        { name: "Botafogo", color: "black", color2: "white" },
-        { name: "Seattle Sounders", color: "#5D9731", color2: "gold" } ] },
-      { name: "Grupo C", teams: [
-        { name: "Bayern Múnich", color: "red", color2: "white" },
-        { name: "Auckland City", color: "#000066", color2: "white" },
-        { name: "Boca Juniors", color: "#0033A0", color2: "#FFCC00" },
-        { name: "Benfica", color: "red", color2: "white" } ] },
-      { name: "Grupo D", teams: [
-        { name: "Flamengo", color: "red", color2: "black" },
-        { name: "Chelsea", color: "#034694", color2: "white" },
-        { name: "Esperance", color: "red", color2: "yellow" },
-        { name: "León", color: "green", color2: "white" } ] },
-      { name: "Grupo E", teams: [
-        { name: "River Plate", color: "white", color2: "red" },
-        { name: "Monterrey", color: "#001489", color2: "white" },
-        { name: "Urawa Red Diamonds", color: "red", color2: "black" },
-        { name: "Inter de Milán", color: "black", color2: "blue" } ] },
-      { name: "Grupo F", teams: [
-        { name: "Fluminense", color: "brown", color2: "green" },
-        { name: "Borussia Dortmund", color: "yellow", color2: "black" },
-        { name: "Ulsan HD", color: "blue", color2: "white" },
-        { name: "Mamelodi Sundowns", color: "yellow", color2: "green" } ] },
-      { name: "Grupo G", teams: [
-        { name: "Manchester City", color: "#6CABDD", color2: "white" },
-        { name: "Wydad Casablanca", color: "red", color2: "white" },
-        { name: "Al-Ain", color: "purple", color2: "white" },
-        { name: "Juventus", color: "black", color2: "white" } ] },
-      { name: "Grupo H", teams: [
-        { name: "Real Madrid", color: "white", color2: "gold" },
-        { name: "Al-Hilal", color: "blue", color2: "white" },
-        { name: "Pachuca", color: "orange", color2: "white" },
-        { name: "Salzburgo", color: "white", color2: "blue" } ] }
-    ];
+const fixture = document.getElementById("fixture");
+const knockout = document.getElementById("knockout");
+const selected = [];
 
-    data.forEach(group => {
+function renderGroups() {
+  groupsData.forEach((group, groupIndex) => {
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "group";
+    const title = document.createElement("h2");
+    title.textContent = `Grupo ${String.fromCharCode(65 + groupIndex)}`;
+    groupDiv.appendChild(title);
+
+    let selections = [];
+
+    group.forEach(team => {
       const div = document.createElement("div");
-      div.className = "group";
-      div.innerHTML = `<h2>${group.name}</h2>`;
+      div.className = "team";
+      const circle = document.createElement("div");
+      circle.className = "circle";
+      const [c1, c2] = teamColors[team] || ["gray", "gray"];
+      circle.style.background = `linear-gradient(to right, ${c1} 50%, ${c2} 50%)`;
+      div.appendChild(circle);
+      div.append(team);
 
-      let selections = [];
-
-      group.teams.forEach(team => {
-        const teamDiv = document.createElement("div");
-        teamDiv.className = "team";
-        teamDiv.innerHTML = `<div class="circle" style="background: linear-gradient(to right, ${team.color} 50%, ${team.color2} 50%);"></div>${team.name}`;
-
-        teamDiv.addEventListener("click", () => {
-          if (selections.includes(teamDiv)) {
-            teamDiv.classList.remove("selected-1", "selected-2");
-            selections = selections.filter(t => t !== teamDiv);
-          } else if (selections.length < 2) {
-            selections.push(teamDiv);
-            teamDiv.classList.add(selections.length === 1 ? "selected-1" : "selected-2");
-
-            if (selections.length === 2) {
-              const allSelected = document.querySelectorAll('.team.selected-2');
-              if (allSelected.length === 8) renderOctavos();
-            }
-          }
-        });
-
-        div.appendChild(teamDiv);
+      div.addEventListener("click", () => {
+        if (selections.includes(team)) {
+          selections = selections.filter(t => t !== team);
+          div.classList.remove("selected-1", "selected-2");
+          selected.splice(selected.indexOf(team), 1);
+        } else if (selections.length < 2) {
+          selections.push(team);
+          selected.push(team);
+          div.classList.add(selections.length === 1 ? "selected-1" : "selected-2");
+          if (selected.length === 16) renderOctavos();
+        }
       });
 
-      groups.appendChild(div);
+      groupDiv.appendChild(div);
     });
 
-    function renderOctavos() {
-  octavos.innerHTML = "<h2 style='width:100%;text-align:center;'>Octavos de Final</h2>";
+    fixture.appendChild(groupDiv);
+  });
+}
 
-  const selectedTeams = Array.from(document.querySelectorAll('.team.selected-1, .team.selected-2'));
-  const teams = selectedTeams.map(team => team.textContent.trim());
+function renderOctavos() {
+  knockout.innerHTML = "<h2>Octavos de Final</h2>";
+
+  const firsts = [], seconds = [];
+  for (let i = 0; i < selected.length; i += 2) {
+    firsts.push(selected[i]);
+    seconds.push(selected[i + 1]);
+  }
+
+  const matchups = [
+    [firsts[0], seconds[1]],
+    [firsts[1], seconds[0]],
+    [firsts[2], seconds[3]],
+    [firsts[3], seconds[2]],
+    [firsts[4], seconds[5]],
+    [firsts[5], seconds[4]],
+    [firsts[6], seconds[7]],
+    [firsts[7], seconds[6]]
+  ];
 
   const winners = [];
 
-  for (let i = 0; i < 8; i++) {
-    const team1 = teams[i];
-    const team2 = teams[15 - i];
-
+  matchups.forEach(([team1, team2], index) => {
     const match = document.createElement("div");
     match.className = "group";
-    match.dataset.matchIndex = i;
-
-    const options = document.createElement("div");
-    options.style.display = "flex";
-    options.style.flexDirection = "column";
-    options.style.gap = "0.5rem";
-
-    const team1Obj = data.flatMap(g => g.teams).find(t => t.name === team1);
-    const team2Obj = data.flatMap(g => g.teams).find(t => t.name === team2);
 
     const div1 = document.createElement("div");
     div1.className = "team";
-    div1.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team1Obj.color} 50%, ${team1Obj.color2} 50%);'></div>${team1}`;
+    const circle1 = document.createElement("div");
+    circle1.className = "circle";
+    const [c1a, c1b] = teamColors[team1] || ["gray", "gray"];
+    circle1.style.background = `linear-gradient(to right, ${c1a} 50%, ${c1b} 50%)`;
+    div1.appendChild(circle1);
+    div1.append(team1);
+
+    const div2 = document.createElement("div");
+    div2.className = "team";
+    const circle2 = document.createElement("div");
+    circle2.className = "circle";
+    const [c2a, c2b] = teamColors[team2] || ["gray", "gray"];
+    circle2.style.background = `linear-gradient(to right, ${c2a} 50%, ${c2b} 50%)`;
+    div2.appendChild(circle2);
+    div2.append(team2);
+
     div1.addEventListener("click", () => {
       div1.classList.add("selected-1");
       div2.classList.remove("selected-1");
-      winners[i] = team1;
+      winners[index] = team1;
       if (winners.filter(Boolean).length === 8) renderCuartos(winners);
     });
 
-    const div2 = document.createElement("div");
-    div2.className = "team";
-    div2.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team2Obj.color} 50%, ${team2Obj.color2} 50%);'></div>${team2}`;
     div2.addEventListener("click", () => {
       div2.classList.add("selected-1");
       div1.classList.remove("selected-1");
-      winners[i] = team2;
+      winners[index] = team2;
       if (winners.filter(Boolean).length === 8) renderCuartos(winners);
     });
 
-    options.appendChild(div1);
-    options.appendChild(div2);
-    match.appendChild(options);
-    octavos.appendChild(match);
-  }
-}
-
-function renderCuartos(octavosGanadores) {
-  const container = document.createElement("div");
-  container.className = "knockout";
-  const title = document.createElement("h2");
-  title.textContent = "Cuartos de Final";
-  title.style.width = "100%";
-  title.style.textAlign = "center";
-  container.appendChild(title);
-
-  const semifinalistas = [];
-
-  for (let i = 0; i < 4; i++) {
-    const team1 = octavosGanadores[i * 2];
-    const team2 = octavosGanadores[i * 2 + 1];
-
-    const match = document.createElement("div");
-    match.className = "group";
-
-    const options = document.createElement("div");
-    options.style.display = "flex";
-    options.style.flexDirection = "column";
-    options.style.gap = "0.5rem";
-
-    const team1Obj = data.flatMap(g => g.teams).find(t => t.name === team1);
-    const team2Obj = data.flatMap(g => g.teams).find(t => t.name === team2);
-
-    const div1 = document.createElement("div");
-    div1.className = "team";
-    div1.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team1Obj.color} 50%, ${team1Obj.color2} 50%);'></div>${team1}`;
-    div1.addEventListener("click", () => {
-      div1.classList.add("selected-1");
-      div2.classList.remove("selected-1");
-      semifinalistas[i] = team1;
-      if (semifinalistas.filter(Boolean).length === 4) renderSemis(semifinalistas);
-    });
-
-    const div2 = document.createElement("div");
-    div2.className = "team";
-    div2.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team2Obj.color} 50%, ${team2Obj.color2} 50%);'></div>${team2}`;
-    div2.addEventListener("click", () => {
-      div2.classList.add("selected-1");
-      div1.classList.remove("selected-1");
-      semifinalistas[i] = team2;
-      if (semifinalistas.filter(Boolean).length === 4) renderSemis(semifinalistas);
-    });
-
-    options.appendChild(div1);
-    options.appendChild(div2);
-    match.appendChild(options);
-    container.appendChild(match);
-  }
-
-  document.body.appendChild(container);
-}
-  
-function renderSemis(cuartosGanadores) {
-  const container = document.createElement("div");
-  container.className = "knockout";
-  const title = document.createElement("h2");
-  title.textContent = "Semifinales";
-  title.style.width = "100%";
-  title.style.textAlign = "center";
-  container.appendChild(title);
-
-  const finalistas = [];
-
-  for (let i = 0; i < 2; i++) {
-    const team1 = cuartosGanadores[i * 2];
-    const team2 = cuartosGanadores[i * 2 + 1];
-
-    const match = document.createElement("div");
-    match.className = "group";
-
-    const options = document.createElement("div");
-    options.style.display = "flex";
-    options.style.flexDirection = "column";
-    options.style.gap = "0.5rem";
-
-    const team1Obj = data.flatMap(g => g.teams).find(t => t.name === team1);
-    const team2Obj = data.flatMap(g => g.teams).find(t => t.name === team2);
-
-    const div1 = document.createElement("div");
-    div1.className = "team";
-    div1.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team1Obj.color} 50%, ${team1Obj.color2} 50%);'></div>${team1}`;
-    div1.addEventListener("click", () => {
-      div1.classList.add("selected-1");
-      div2.classList.remove("selected-1");
-      finalistas[i] = team1;
-      if (finalistas.filter(Boolean).length === 2) renderFinal(finalistas);
-    });
-
-    const div2 = document.createElement("div");
-    div2.className = "team";
-    div2.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team2Obj.color} 50%, ${team2Obj.color2} 50%);'></div>${team2}`;
-    div2.addEventListener("click", () => {
-      div2.classList.add("selected-1");
-      div1.classList.remove("selected-1");
-      finalistas[i] = team2;
-      if (finalistas.filter(Boolean).length === 2) renderFinal(finalistas);
-    });
-
-    options.appendChild(div1);
-    options.appendChild(div2);
-    match.appendChild(options);
-    container.appendChild(match);
-  }
-
-  document.body.appendChild(container);
-}
-
-function renderFinal(finalistas) {
-  const container = document.createElement("div");
-  container.className = "knockout";
-  const title = document.createElement("h2");
-  title.textContent = "Final";
-  title.style.width = "100%";
-  title.style.textAlign = "center";
-  container.appendChild(title);
-
-  const match = document.createElement("div");
-  match.className = "group";
-
-  const options = document.createElement("div");
-  options.style.display = "flex";
-  options.style.flexDirection = "column";
-  options.style.gap = "0.5rem";
-
-  const team1Obj = data.flatMap(g => g.teams).find(t => t.name === finalistas[0]);
-  const team2Obj = data.flatMap(g => g.teams).find(t => t.name === finalistas[1]);
-
-  const div1 = document.createElement("div");
-  div1.className = "team";
-  div1.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team1Obj.color} 50%, ${team1Obj.color2} 50%);'></div>${finalistas[0]}`;
-  div1.addEventListener("click", () => {
-    div1.classList.add("selected-1");
-    div2.classList.remove("selected-1");
-    renderCampeon(finalistas[0]);
+    match.appendChild(div1);
+    match.appendChild(div2);
+    knockout.appendChild(match);
   });
-
-  const div2 = document.createElement("div");
-  div2.className = "team";
-  div2.innerHTML = `<div class='circle' style='background: linear-gradient(to right, ${team2Obj.color} 50%, ${team2Obj.color2} 50%);'></div>${finalistas[1]}`;
-  div2.addEventListener("click", () => {
-    div2.classList.add("selected-1");
-    div1.classList.remove("selected-1");
-    renderCampeon(finalistas[1]);
-  });
-
-  options.appendChild(div1);
-  options.appendChild(div2);
-  match.appendChild(options);
-  container.appendChild(match);
-  document.body.appendChild(container);
 }
 
-function renderCampeon(equipo) {
-  const title = document.createElement("h2");
-  title.textContent = `🏆 Campeón: ${equipo}`;
-  title.style.color = "#FFD700";
-  title.style.textAlign = "center";
-  title.style.fontSize = "2rem";
-  title.style.marginTop = "1rem";
-  document.body.appendChild(title);
-}
-</script>
-<button id="shareBtn" style="margin: 2rem auto; padding: 0.8rem 1.2rem; font-size: 1rem; border: none; border-radius: 8px; background-color: #25d366; color: white; cursor: pointer; display: block;">Compartir por WhatsApp</button>
-<script>
-document.getElementById("shareBtn").addEventListener("click", async () => {
-  const captureElement = document.body;
-  const canvas = await html2canvas(captureElement);
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-
-  const form = new FormData();
-  form.append("image", blob, "captura.png");
-  form.append("key", "808a545e88d3bea6601c087cddeaafd3");
-
-  const res = await fetch("https://api.imgbb.com/1/upload", {
-    method: "POST",
-    body: form
-  });
-  const data = await res.json();
-  const imageUrl = data.data.url;
-
-  const mensaje = encodeURIComponent(`Esta es mi predicción del Mundial de Clubes 2025 que hice en Bolavip: ${imageUrl}
-
-Vos ya hiciste la tuya? Hacela acá y compartila: https://mdc2025.vercel.app/`);
-  const whatsappUrl = `https://wa.me/?text=${mensaje}`;
-  window.open(whatsappUrl, '_blank');
-});
+renderGroups();
 </script>
 </body>
 </html>
+
 
 
 
