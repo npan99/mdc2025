@@ -282,7 +282,9 @@ shareBtn.style.alignItems = "center";
 shareBtn.style.gap = "0.5rem";
 
 shareBtn.onclick = () => {
-  console.log("Generando imagen...");
+  shareBtn.disabled = true;
+  shareBtn.textContent = "Generando imagen...";
+
   html2canvas(document.body).then(canvas => {
     canvas.toBlob(blob => {
       const form = new FormData();
@@ -294,9 +296,11 @@ shareBtn.onclick = () => {
       })
       .then(res => res.json())
       .then(data => {
+        shareBtn.disabled = false;
+        shareBtn.textContent = "Compartir pronóstico";
+
         if (!data.success || !data.data || !data.data.url) {
           alert("❌ Error al subir la imagen. Intentá nuevamente.");
-          console.error("ImgBB response:", data);
           return;
         }
 
@@ -304,16 +308,23 @@ shareBtn.onclick = () => {
         const text = `Esta es mi predicción del Mundial de Clubes 2025 que hice en Bolavip: ${link}
 
 ¿Vos ya hiciste la tuya? Hacela acá y compartila: https://mdc2025.vercel.app/`;
-        const whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        window.open(whatsappURL, '_blank');
+
+        // Crear un <a> para asegurar compatibilidad con móviles
+        const a = document.createElement("a");
+        a.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        a.target = "_blank";
+        a.click();
       })
       .catch(error => {
+        shareBtn.disabled = false;
+        shareBtn.textContent = "Compartir pronóstico";
         console.error("Error al subir a ImgBB:", error);
         alert("Hubo un error al subir la imagen.");
       });
     });
   });
 };
+
 
 
     btnContainer.appendChild(shareBtn);
