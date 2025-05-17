@@ -24,6 +24,7 @@
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+      margin-bottom: 1rem;
     }
     .team {
       display: flex;
@@ -89,7 +90,6 @@ const teamColors = {
   "Pachuca": ["orange", "white"],
   "Salzburgo": ["white", "blue"]
 };
-
 const groupsData = [
   ["Palmeiras", "Porto", "Al-Ahly", "Inter Miami"],
   ["PSG", "Atlético Madrid", "Botafogo", "Seattle Sounders"],
@@ -105,6 +105,19 @@ const fixture = document.getElementById("fixture");
 const knockout = document.getElementById("knockout");
 const selected = [];
 
+function createTeamDiv(team, onClick) {
+  const div = document.createElement("div");
+  div.className = "team";
+  const circle = document.createElement("div");
+  circle.className = "circle";
+  const [c1, c2] = teamColors[team] || ["gray", "gray"];
+  circle.style.background = `linear-gradient(to right, ${c1} 50%, ${c2} 50%)`;
+  div.appendChild(circle);
+  div.append(team);
+  if (onClick) div.addEventListener("click", onClick);
+  return div;
+}
+
 function renderGroups() {
   groupsData.forEach((group, groupIndex) => {
     const groupDiv = document.createElement("div");
@@ -116,16 +129,7 @@ function renderGroups() {
     let selections = [];
 
     group.forEach(team => {
-      const div = document.createElement("div");
-      div.className = "team";
-      const circle = document.createElement("div");
-      circle.className = "circle";
-      const [c1, c2] = teamColors[team] || ["gray", "gray"];
-      circle.style.background = `linear-gradient(to right, ${c1} 50%, ${c2} 50%)`;
-      div.appendChild(circle);
-      div.append(team);
-
-      div.addEventListener("click", () => {
+      const div = createTeamDiv(team, () => {
         if (selections.includes(team)) {
           selections = selections.filter(t => t !== team);
           div.classList.remove("selected-1", "selected-2");
@@ -137,7 +141,6 @@ function renderGroups() {
           if (selected.length === 16) renderOctavos();
         }
       });
-
       groupDiv.appendChild(div);
     });
 
@@ -145,15 +148,47 @@ function renderGroups() {
   });
 }
 
-function renderOctavos() {
-  knockout.innerHTML = "<h2>Octavos de Final</h2>";
+function renderPhase(titleText, teams, nextCallback) {
+  const title = document.createElement("h2");
+  title.textContent = titleText;
+  knockout.appendChild(title);
 
+  const nextRound = [];
+
+  for (let i = 0; i < teams.length; i += 2) {
+    const match = document.createElement("div");
+    match.className = "group";
+
+    const team1 = teams[i];
+    const team2 = teams[i + 1];
+
+    const div1 = createTeamDiv(team1, () => {
+      div1.classList.add("selected-1");
+      div2.classList.remove("selected-1");
+      nextRound[i / 2] = team1;
+      if (nextRound.filter(Boolean).length === teams.length / 2) nextCallback(nextRound);
+    });
+
+    const div2 = createTeamDiv(team2, () => {
+      div2.classList.add("selected-1");
+      div1.classList.remove("selected-1");
+      nextRound[i / 2] = team2;
+      if (nextRound.filter(Boolean).length === teams.length / 2) nextCallback(nextRound);
+    });
+
+    match.appendChild(div1);
+    match.appendChild(div2);
+    knockout.appendChild(match);
+  }
+}
+
+function renderOctavos() {
+  knockout.innerHTML = "";
   const firsts = [], seconds = [];
   for (let i = 0; i < selected.length; i += 2) {
     firsts.push(selected[i]);
     seconds.push(selected[i + 1]);
   }
-
   const matchups = [
     [firsts[0], seconds[1]],
     [firsts[1], seconds[0]],
@@ -163,173 +198,69 @@ function renderOctavos() {
     [firsts[5], seconds[4]],
     [firsts[6], seconds[7]],
     [firsts[7], seconds[6]]
-  ];
-
-  const winners = [];
-
-  matchups.forEach(([team1, team2], index) => {
-    const match = document.createElement("div");
-    match.className = "group";
-
-    const div1 = document.createElement("div");
-    div1.className = "team";
-    const circle1 = document.createElement("div");
-    circle1.className = "circle";
-    const [c1a, c1b] = teamColors[team1] || ["gray", "gray"];
-    circle1.style.background = `linear-gradient(to right, ${c1a} 50%, ${c1b} 50%)`;
-    div1.appendChild(circle1);
-    div1.append(team1);
-
-    const div2 = document.createElement("div");
-    div2.className = "team";
-    const circle2 = document.createElement("div");
-    circle2.className = "circle";
-    const [c2a, c2b] = teamColors[team2] || ["gray", "gray"];
-    circle2.style.background = `linear-gradient(to right, ${c2a} 50%, ${c2b} 50%)`;
-    div2.appendChild(circle2);
-    div2.append(team2);
-
-    div1.addEventListener("click", () => {
-      div1.classList.add("selected-1");
-      div2.classList.remove("selected-1");
-      winners[index] = team1;
-      if (winners.filter(Boolean).length === 8) renderCuartos(winners);
-    });
-
-    div2.addEventListener("click", () => {
-      div2.classList.add("selected-1");
-      div1.classList.remove("selected-1");
-      winners[index] = team2;
-      if (winners.filter(Boolean).length === 8) renderCuartos(winners);
-    });
-
-    match.appendChild(div1);
-    match.appendChild(div2);
-    knockout.appendChild(match);
-  });
+  ].flat();
+  renderPhase("Octavos de Final", matchups, renderCuartos);
 }
 
 function renderCuartos(winners) {
-  const title = document.createElement("h2");
-  title.textContent = "Cuartos de Final";
-  knockout.appendChild(title);
-
-  const semifinalistas = [];
-
-  for (let i = 0; i < 4; i++) {
-    const team1 = winners[i * 2];
-    const team2 = winners[i * 2 + 1];
-
-    const match = document.createElement("div");
-    match.className = "group";
-
-    const div1 = document.createElement("div");
-    div1.className = "team";
-    const circle1 = document.createElement("div");
-    circle1.className = "circle";
-    const [c1a, c1b] = teamColors[team1] || ["gray", "gray"];
-    circle1.style.background = `linear-gradient(to right, ${c1a} 50%, ${c1b} 50%)`;
-    div1.appendChild(circle1);
-    div1.append(team1);
-
-    const div2 = document.createElement("div");
-    div2.className = "team";
-    const circle2 = document.createElement("div");
-    circle2.className = "circle";
-    const [c2a, c2b] = teamColors[team2] || ["gray", "gray"];
-    circle2.style.background = `linear-gradient(to right, ${c2a} 50%, ${c2b} 50%)`;
-    div2.appendChild(circle2);
-    div2.append(team2);
-
-    div1.addEventListener("click", () => {
-      div1.classList.add("selected-1");
-      div2.classList.remove("selected-1");
-      semifinalistas[i] = team1;
-      if (semifinalistas.filter(Boolean).length === 4) renderSemis(semifinalistas);
-    });
-
-    div2.addEventListener("click", () => {
-      div2.classList.add("selected-1");
-      div1.classList.remove("selected-1");
-      semifinalistas[i] = team2;
-      if (semifinalistas.filter(Boolean).length === 4) renderSemis(semifinalistas);
-    });
-
-    match.appendChild(div1);
-    match.appendChild(div2);
-    knockout.appendChild(match);
-  }
+  renderPhase("Cuartos de Final", winners, renderSemis);
 }
 
-function renderSemis(semifinalistas) {
-  const title = document.createElement("h2");
-  title.textContent = "Semifinales";
-  knockout.appendChild(title);
-
-  const finalistas = [];
-
-  for (let i = 0; i < 2; i++) {
-    const team1 = semifinalistas[i * 2];
-    const team2 = semifinalistas[i * 2 + 1];
-
-    const match = document.createElement("div");
-    match.className = "group";
-
-    const div1 = document.createElement("div");
-    div1.className = "team";
-    const circle1 = document.createElement("div");
-    circle1.className = "circle";
-    const [c1a, c1b] = teamColors[team1] || ["gray", "gray"];
-    circle1.style.background = `linear-gradient(to right, ${c1a} 50%, ${c1b} 50%)`;
-    div1.appendChild(circle1);
-    div1.append(team1);
-
-    const div2 = document.createElement("div");
-    div2.className = "team";
-    const circle2 = document.createElement("div");
-    circle2.className = "circle";
-    const [c2a, c2b] = teamColors[team2] || ["gray", "gray"];
-    circle2.style.background = `linear-gradient(to right, ${c2a} 50%, ${c2b} 50%)`;
-    div2.appendChild(circle2);
-    div2.append(team2);
-
-    div1.addEventListener("click", () => {
-      div1.classList.add("selected-1");
-      div2.classList.remove("selected-1");
-      finalistas[i] = team1;
-      if (finalistas.filter(Boolean).length === 2) renderFinal(finalistas);
-    });
-
-    div2.addEventListener("click", () => {
-      div2.classList.add("selected-1");
-      div1.classList.remove("selected-1");
-      finalistas[i] = team2;
-      if (finalistas.filter(Boolean).length === 2) renderFinal(finalistas);
-    });
-
-    match.appendChild(div1);
-    match.appendChild(div2);
-    knockout.appendChild(match);
-  }
+function renderSemis(winners) {
+  renderPhase("Semifinales", winners, renderFinal);
 }
 
-function renderFinal(finalistas) {
-  const title = document.createElement("h2");
-  title.textContent = "Final";
-  knockout.appendChild(title);
+function renderFinal(winners) {
+  renderPhase("Final", winners, (finalistas) => {
+    const title = document.createElement("h2");
+    title.textContent = `🏆 Campeón: ${finalistas[0]}`;
+    knockout.appendChild(title);
 
-  const match = document.createElement("div");
-  match.className = "group";
+    const btnContainer = document.createElement("div");
+    btnContainer.style.marginTop = "2rem";
 
-  const div1 = document.createElement("div");
-  div1.className = "team";
-  const circle1 = document.createElement("div");
+    const resetBtn = document.createElement("button");
+    resetBtn.textContent = "🔁 Reiniciar";
+    resetBtn.style.margin = "0.5rem";
+    resetBtn.onclick = () => location.reload();
+
+    const shareBtn = document.createElement("button");
+    shareBtn.textContent = "📤 Compartir";
+    shareBtn.style.margin = "0.5rem";
+    shareBtn.onclick = () => {
+      html2canvas(document.body).then(canvas => {
+        canvas.toBlob(blob => {
+          const form = new FormData();
+          form.append("image", blob, "fixture.png");
+
+          fetch("https://api.imgbb.com/1/upload?key=808a545e88d3bea6601c087cddeaafd3", {
+            method: "POST",
+            body: form
+          })
+          .then(res => res.json())
+          .then(data => {
+            const link = data.data.url;
+            const text = `Esta es mi predicción del Mundial de Clubes 2025 que hice en Bolavip: ${link}
+
+¿Vos ya hiciste la tuya? Hacela acá y compartila: https://mdc2025.vercel.app/`;
+            const whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(whatsappURL, '_blank');
+          });
+        });
+      });
+    };
+
+    btnContainer.appendChild(resetBtn);
+    btnContainer.appendChild(shareBtn);
+    knockout.appendChild(btnContainer);
+  });
 }
 
 renderGroups();
 </script>
 </body>
 </html>
+
 
 
 
