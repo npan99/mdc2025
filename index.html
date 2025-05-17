@@ -269,39 +269,52 @@ function renderFinal(winners) {
     resetBtn.onclick = () => location.reload();
 
     const shareBtn = document.createElement("button");
-    shareBtn.innerHTML = '<img src="https://img.icons8.com/ios-filled/20/ffffff/whatsapp.png" style="vertical-align:middle;margin-right:8px;">Compartir pronóstico';
-    shareBtn.style.backgroundColor = "#25D366";
-    shareBtn.style.color = "white";
-    shareBtn.style.border = "none";
-    shareBtn.style.borderRadius = "5px";
-    shareBtn.style.padding = "0.5rem 1rem";
-    shareBtn.style.cursor = "pointer";
-    shareBtn.style.fontSize = "1rem";
-    shareBtn.style.display = "inline-flex";
-    shareBtn.style.alignItems = "center";
-    shareBtn.style.gap = "0.5rem";
-    shareBtn.onclick = () => {
-      html2canvas(document.body).then(canvas => {
-        canvas.toBlob(blob => {
-          const form = new FormData();
-          form.append("image", blob, "fixture.png");
+shareBtn.innerHTML = '<img src="https://img.icons8.com/ios-filled/20/ffffff/whatsapp.png" style="vertical-align:middle;margin-right:8px;">Compartir pronóstico';
+shareBtn.style.backgroundColor = "#25D366";
+shareBtn.style.color = "white";
+shareBtn.style.border = "none";
+shareBtn.style.borderRadius = "5px";
+shareBtn.style.padding = "0.5rem 1rem";
+shareBtn.style.cursor = "pointer";
+shareBtn.style.fontSize = "1rem";
+shareBtn.style.display = "inline-flex";
+shareBtn.style.alignItems = "center";
+shareBtn.style.gap = "0.5rem";
 
-          fetch("https://api.imgbb.com/1/upload?key=808a545e88d3bea6601c087cddeaafd3", {
-            method: "POST",
-            body: form
-          })
-          .then(res => res.json())
-          .then(data => {
-            const link = data.data.url;
-            const text = `Esta es mi predicción del Mundial de Clubes 2025 que hice en Bolavip: ${link}
+shareBtn.onclick = () => {
+  console.log("Generando imagen...");
+  html2canvas(document.body).then(canvas => {
+    canvas.toBlob(blob => {
+      const form = new FormData();
+      form.append("image", blob, "fixture.png");
+
+      fetch("https://api.imgbb.com/1/upload?key=9f96ac50f54b5521b948a2e485c13a03", {
+        method: "POST",
+        body: form
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success || !data.data || !data.data.url) {
+          alert("❌ Error al subir la imagen. Intentá nuevamente.");
+          console.error("ImgBB response:", data);
+          return;
+        }
+
+        const link = data.data.url;
+        const text = `Esta es mi predicción del Mundial de Clubes 2025 que hice en Bolavip: ${link}
 
 ¿Vos ya hiciste la tuya? Hacela acá y compartila: https://mdc2025.vercel.app/`;
-            const whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
-            window.open(whatsappURL, '_blank');
-          });
-        });
+        const whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(whatsappURL, '_blank');
+      })
+      .catch(error => {
+        console.error("Error al subir a ImgBB:", error);
+        alert("Hubo un error al subir la imagen.");
       });
-    };
+    });
+  });
+};
+
 
     btnContainer.appendChild(shareBtn);
     const spacer = document.createElement("div");
